@@ -7,13 +7,16 @@ CXX :=clang++
 BIN := bin
 SRC := src
 #LIB := lib
-LIB := 
+LIB :=  
 INC := include
 MAINFILE := $(SRC)/driver.cc
 
 # Build directories and output
 TARGET := $(BIN)/exec
+TARGET1 := $(BIN)/test
 BUILD := build
+BUILD1 := build1
+RUNTEST := test
 
 # Library search directories and flags
 EXT_LIB :=
@@ -27,12 +30,16 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 # Construct build output and dependency filenames
 SRCS := $(shell find $(SRC) -name *.cc)
 OBJS := $(subst $(SRC)/,$(BUILD)/,$(addsuffix .o,$(basename $(SRCS))))
+OBJS1 := $(subst $(SRC)/,$(BUILD1)/,$(addsuffix .o,$(basename $(SRCS))))
 DEPS := $(OBJS:.o=.d)
 
 # Run task
 run: build
 	@echo "🚀 Executing..."
 	./$(TARGET) $(ARGS)
+test:$(TARGET1)
+	@echo "🚀 Build test case..."
+	./$(TARGET1) $(ARGS)
 
 # Build task
 build: clean all
@@ -40,16 +47,27 @@ build: clean all
 # Main task
 all: $(TARGET)
 
+
 # Task producing target from built files
 $(TARGET): $(OBJS)
 	@echo "🚧 Building..."
 	mkdir -p $(dir $@)
-	$(CXX) $(OBJS) -o $@ $(LDPATHS) $(LDFLAGS)
+	$(CXX) $(OBJS) -o $@ $(LDPATHS) $(LDFLAG)
+# Task producing target from built files
+$(TARGET1): $(OBJS1)
+	@echo "🚧 Building..."
+	mkdir -p $(dir $@)
+	$(CXX) $(OBJS1) -o $@ $(LDPATHS) $(LDFLAG)
 
 # Compile all cpp files
+# $(CXX) $(CXX_FLAGS) $(PRE_FLAGS) $(INC_FLAGS) -c -o $@ $< $(LDPATHS) $(LDFLAGS)
 $(BUILD)/%.o: $(SRC)/%.cc
 	mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) $(PRE_FLAGS) $(INC_FLAGS) -c -o $@ $< $(LDPATHS) $(LDFLAGS)
+	$(CXX) $(CXX_FLAGS) $(PRE_FLAGS) $(INC_FLAGS) -c -o $@ $<  $(LDFLAGS)
+
+$(BUILD1)/%.o: $(SRC)/%.cc
+	mkdir -p $(dir $@)
+	$(CXX) $(CXX_FLAGS) $(PRE_FLAGS) $(INC_FLAGS) -D RUNTEST -c -o $@ $<  $(LDFLAGS)
 
 # Clean task
 .PHONY: clean

@@ -42,16 +42,3 @@ int Color::Blue() const
 {
     return blue_;
 }
-/*
-TEST_CASE("Sample","Color-1")
-{
-    Color color1(2,3,10);
-    const int red   = 2;
-    const int green = 3;
-    const int blue  = 10;
-    REQUIRE(std::equal(red==color1.Red()));
-    REQUIRE(std::equal(green==color1.Green()));
-    REQUIRE(std::equal(blue==color1.Blue()));
-
-}
-*/

@@ -167,7 +167,7 @@ void PathImage::ToPpm(const std::string& name) const
 error_process:
     std::runtime_error("ToPpm file open error");
 }
-
+#ifndef RUNTEST
 int main(int argc, char *argv[])
 {   
     if(argc != 5) 
@@ -200,6 +200,6 @@ int main(int argc, char *argv[])
   duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
   std::cout << "It took me " << time_span.count() << " seconds.";
   std::cout << std::endl;
-  #endif  
-  
+  #endif    
 }
+#endif 
