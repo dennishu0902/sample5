@@ -27,7 +27,7 @@ Color::Color(int r, int g, int b)
     return;
 error_process:
     //throw exception
-    std::runtime_error("error rgb value");
+    throw std::runtime_error("error rgb value");
 }
 int Color::Red() const 
 {

@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
     if(argc != 5) 
        {
         std::cout <<argc ;
-        std::cout << "Please run with input file name ,width, height, and output file name"<< std::endl;
+        std::cout << "Please run with input file name width height output file name"<< std::endl;
         return -1;
        }
     std::string inputfile = static_cast<std::string>(argv[1]);
