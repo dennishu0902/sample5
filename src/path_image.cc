@@ -48,7 +48,7 @@ PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &datase
         if((best_row + 1) == h1) n_ele3 = int_max; //if row + 1 = h1, we can't find from row+1. 
         else n_ele3 = dataset.DatumAt(best_row + 1,col);
        
-        n_ele2 = dataset.DatumAt(row,col);
+        n_ele2 = dataset.DatumAt(best_row,col);
         //middle
         row_change = 0; 
         ele_change = abs(n_ele2 - cur_ele);
@@ -60,7 +60,11 @@ PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &datase
         { row_change = -1; ele_change = abs(n_ele1 - cur_ele);}
         //Get min ele change 
         cur_path.IncEleChange(ele_change);
-        best_row = best_row + row_change ;
+        switch(row_change)
+        {
+            case -1: best_row = best_row - 1;break; //avoid using size_t var  + int var 
+            case  1: best_row = best_row + 1;break;
+        }
         cur_path.SetLoc(col,best_row);
         cur_ele = dataset.DatumAt(best_row,col);
       } 
@@ -177,6 +181,7 @@ int main(int argc, char *argv[])
     
     ElevationDataset Dataset = ElevationDataset(inputfile, width, height);
     std::cout << "Read Elevation Data" << std::endl;
+    //std::cout << Dataset ;
     GrayscaleImage   GImage = GrayscaleImage(Dataset);
     std::cout << "Generated Gray Image" << std::endl;
     PathImage        PImage = PathImage(GImage,Dataset);

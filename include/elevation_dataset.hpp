@@ -2,6 +2,7 @@
 #define ELEVEATIONDAT_H
 #include <cstddef>
 #include <vector>
+#include <iostream>
 using namespace std;
 class ElevationDataset
 {
@@ -16,6 +17,17 @@ public:
     int MinEle() const;//Returns the minimum elevation value observed in the dataset
     int DatumAt(size_t row, size_t col) const;//Returns the value recorded for (row, col)
     const std::vector<std::vector<int> >& GetData() const;//Returns reference to const to data_.
+    friend ostream& operator<<(std::ostream &os,  const ElevationDataset &e_in)
+    {
+      os << "Elevation min"<<e_in.MinEle() << e_in.MaxEle() << ": "<<std::endl ;
+      for(auto row:e_in.data_)
+      {
+        for(auto col:row)
+         os << col <<" ";
+        os << std::endl; 
+      }
+      return os;
+    };
 private:
     std::vector<std::vector<int> > data_;//Houses the elevation data read from the file.
     size_t width_;
