@@ -31,12 +31,11 @@ PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &datase
     best_path_row_ = 0;
     for(row=0;row<h1;row++)         //how many path
     {
-       paths_.push_back(Path(w1, row));//path
+       paths_.push_back(Path(w1, row));//path, different starting row
     }
    
     for(row=0; row < h1; row++)
     {
-
      Path& cur_path = paths_.at(row);
      cur_path.SetLoc(0,row); //SetLoc(col,row)
      cur_ele = dataset.DatumAt(row,0);//start point ele
@@ -70,6 +69,7 @@ PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &datase
         min_ele_change = cur_path.EleChange();
         best_path_row_ = row;
       }
+      std::cout << cur_path << std::endl;
     }
     //put path onto path_image_, Fill specified color to the image
     for(row=0;row<h1;row++)

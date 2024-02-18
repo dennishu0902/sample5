@@ -19,12 +19,11 @@ public:
   void SetLoc( size_t col, size_t row );
   friend ostream& operator<<(std::ostream &os,  const Path &g_in)
    {
-      os << "Path:" ;
+      os << "Path" << g_in.starting_row_ << ": " ;
       for(auto pos1:g_in.path_)
       {
          os << pos1<<" ";
       }
-      os << std::endl;  
       return os;
    };
 private:
