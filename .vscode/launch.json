@@ -5,7 +5,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/exec",
-            "args": ["dataset.txt","10","13","out.txt"],
+            "args": ["dataset.txt","1942","1566","out.ppm"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

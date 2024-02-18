@@ -7,6 +7,10 @@
 #include "grayscale_image.hpp"
 #include "path.hpp"
 #include "path_image.hpp"
+#define WATCH_TIME
+#ifdef WATCH_TIME
+#include <chrono> 
+#endif
 using namespace std;
     //Initializes the primitive data members with their respective values read from image; 
     //populates the two-dimensional std::vector<std::vector<Color>> with values from 
@@ -73,7 +77,7 @@ PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &datase
         min_ele_change = cur_path.EleChange();
         best_path_row_ = row;
       }
-      std::cout << cur_path << std::endl;
+     // std::cout << cur_path << std::endl;
     }
     //put path onto path_image_, Fill specified color to the image
     for(row=0;row<h1;row++)
@@ -96,7 +100,7 @@ PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &datase
                row_b =  cur_path.GetPath().at(col);//at the pos of each col has been saved a best row of col;
                path_image_.at(row_b).at(col)=kBestpathColorValue;
         }
-     
+     std::cout <<"best row is " << best_path_row_ << "ele change is" << cur_path.EleChange() << std::endl;
  } 
 size_t PathImage::Width() const
 {
@@ -178,7 +182,10 @@ int main(int argc, char *argv[])
     std::string outputfile = static_cast<std::string>(argv[4]);
     size_t width = static_cast<size_t>(stoi(widths));   
     size_t height = static_cast<size_t>(stoi(heights));   
-    
+  #ifdef WATCH_TIME
+   using namespace std::chrono;
+ high_resolution_clock::time_point t1 = high_resolution_clock::now();
+  #endif  
     ElevationDataset Dataset(inputfile, width, height);
     std::cout << "Read Elevation Data" << std::endl;
     //std::cout << Dataset ;
@@ -188,4 +195,11 @@ int main(int argc, char *argv[])
     std::cout << "Overlay Path onto Gray Image" << std::endl;
     PImage.ToPpm(outputfile);
     std::cout << "Output Path image to PPM" << std::endl;
+  #ifdef WATCH_TIME
+  high_resolution_clock::time_point t2 = high_resolution_clock::now();
+  duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+  std::cout << "It took me " << time_span.count() << " seconds.";
+  std::cout << std::endl;
+  #endif  
+  
 }
