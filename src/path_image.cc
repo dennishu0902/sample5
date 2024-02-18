@@ -179,12 +179,12 @@ int main(int argc, char *argv[])
     size_t width = static_cast<size_t>(stoi(widths));   
     size_t height = static_cast<size_t>(stoi(heights));   
     
-    ElevationDataset Dataset = ElevationDataset(inputfile, width, height);
+    ElevationDataset Dataset(inputfile, width, height);
     std::cout << "Read Elevation Data" << std::endl;
     //std::cout << Dataset ;
-    GrayscaleImage   GImage = GrayscaleImage(Dataset);
+    GrayscaleImage   GImage(Dataset);
     std::cout << "Generated Gray Image" << std::endl;
-    PathImage        PImage = PathImage(GImage,Dataset);
+    PathImage        PImage(GImage,Dataset);
     std::cout << "Overlay Path onto Gray Image" << std::endl;
     PImage.ToPpm(outputfile);
     std::cout << "Output Path image to PPM" << std::endl;
