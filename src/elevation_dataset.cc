@@ -26,8 +26,10 @@ ElevationDataset::ElevationDataset(const std::string& filename, size_t width, si
    max_ele_ = std::numeric_limits<int>::min();
    
    w1 = 0;
-   while(ifs >> s1) //Read string, use space or LR as seperator 
+   try
    {
+     while(ifs >> s1) //Read string, use space or LR as seperator 
+     {
         size_t pos; 
         value = std::stoi(s1, &pos); 
         if(pos != s1.size()) goto error_process;
@@ -40,7 +42,13 @@ ElevationDataset::ElevationDataset(const std::string& filename, size_t width, si
             h1++;
             if(h1==height) break;//read done
         }
-    }
+     }
+   }
+   catch(const std::exception& e)
+    {
+       std::cerr << e.what() << '\n';
+       throw std::runtime_error ("a runtime error");
+     }
    if(h1 != height) goto error_process; //too less data in the file
    if(ifs>>s1)  goto error_process; //too much data in the file
     width_ = width;
