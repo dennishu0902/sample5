@@ -28,8 +28,9 @@ ElevationDataset::ElevationDataset(const std::string& filename, size_t width, si
    w1 = 0;
    while(ifs >> s1) //Read string, use space or LR as seperator 
    {
-    try { 
-        value = std::stoi(s1); 
+        size_t pos; 
+        value = std::stoi(s1, &pos); 
+        if(pos != s1.size()) goto error_process;
         if(value < min_ele_) min_ele_ = value;
         if(value > max_ele_) max_ele_ = value;
         data_.at(h1).at(w1) = value;
@@ -39,13 +40,7 @@ ElevationDataset::ElevationDataset(const std::string& filename, size_t width, si
             h1++;
             if(h1==height) break;//read done
         }
-        }
-     catch (const std::invalid_argument& ia) 
-     {
-	     std::cout << "Invalid argument: " << ia.what() << '\n';
-         goto error_process;
-      }
-   }
+    }
    if(h1 != height) goto error_process; //too less data in the file
    if(ifs>>s1)  goto error_process; //too much data in the file
     width_ = width;

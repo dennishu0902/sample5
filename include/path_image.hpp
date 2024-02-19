@@ -5,6 +5,7 @@
 #include "elevation_dataset.hpp"
 #include "grayscale_image.hpp"
 #include "color.hpp"
+#include "path.hpp"
 using namespace std;
 class PathImage
 {

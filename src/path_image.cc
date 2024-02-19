@@ -100,7 +100,6 @@ PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &datase
                row_b =  cur_path.GetPath().at(col);//at the pos of each col has been saved a best row of col;
                path_image_.at(row_b).at(col)=kBestpathColorValue;
         }
-     std::cout <<"best row is " << best_path_row_ << "ele change is" << cur_path.EleChange() << std::endl;
  } 
 size_t PathImage::Width() const
 {
