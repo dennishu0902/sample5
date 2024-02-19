@@ -179,8 +179,18 @@ int main(int argc, char *argv[])
     std::string widths = static_cast<std::string>(argv[2]);
     std::string heights = static_cast<std::string>(argv[3]);
     std::string outputfile = static_cast<std::string>(argv[4]);
-    size_t width = static_cast<size_t>(stoi(widths));   
-    size_t height = static_cast<size_t>(stoi(heights));   
+    size_t width, height;
+    try
+    {
+           width = static_cast<size_t>(stoi(widths));   
+           height = static_cast<size_t>(stoi(heights));         
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Width or Height is not digital" << std::endl;
+        std::cerr << e.what() << '\n';
+        throw runtime_error("Error parameters");
+    }
   #ifdef WATCH_TIME
    using namespace std::chrono;
  high_resolution_clock::time_point t1 = high_resolution_clock::now();

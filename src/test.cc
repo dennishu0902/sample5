@@ -1,4 +1,5 @@
 #ifdef RUNTEST
+
 #include <algorithm>
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
@@ -70,6 +71,5 @@ TEST_CASE("Sample2","elevationdata-2")
     CHECK_THROWS(ElevationDataset("dataset1.txt", 10,17));
     CHECK_THROWS(ElevationDataset("dataset2.txt", 10,16));
 }
-
 
 #endif 
