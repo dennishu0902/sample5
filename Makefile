@@ -1,6 +1,6 @@
 # Pre-compiler and Compiler flags
 #CXX_FLAGS := -Wall -Wextra -Werror -pedantic -std=c++2a  -ggdb
-CXX_FLAGS := -Wall -Wextra -Werror -pedantic -std=c++2a  -O3
+CXX_FLAGS := -Wall -Wextra -Werror -pedantic -std=c++2a  -ggdb
 PRE_FLAGS := -MMD -MP
 CXX :=clang++
 # Project directory structure
