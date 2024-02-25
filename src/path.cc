@@ -1,12 +1,9 @@
 #include "path.hpp"
   // Initializes the primitive data members with their respective values from arguments;
   // initializes path_ std::vector<size_t> of length elements. 
-Path::Path(size_t length, size_t starting_row)
+Path::Path(size_t length, size_t starting_row):length_(length), starting_row_(starting_row)
 { 
-   starting_row_ = starting_row;
-   length_  = length;
-   ele_change_ = 0;
-   path_.resize(length);  
+    path_.resize(length);  
 }
 size_t Path::Length() const
 {

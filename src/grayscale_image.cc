@@ -9,22 +9,18 @@
     // Color representation of each elevation datum. Sets width_ and height_ appropriately.
 GrayscaleImage::GrayscaleImage(const ElevationDataset& dataset)
 {
-    size_t w1,h1;
     size_t col=0,row=0;
     std::vector<Color> rowv;
-    int max_ele,min_ele;
-    int ele;
+    int ele=0;
   
-    min_ele = dataset.MinEle();
-    max_ele = dataset.MaxEle();
+    int min_ele = dataset.MinEle();
+    int max_ele = dataset.MaxEle();
    
-    w1 = dataset.Width();
-    h1 = dataset.Height();
+    size_t w1 = dataset.Width();
+    size_t h1 = dataset.Height();
     width_  = w1;
     height_ = h1; 
-    for(col=0;col<w1;col++)
-       rowv.push_back(Color(0,0,0));  
-
+    for(col=0;col<w1;col++) rowv.push_back(Color(0,0,0));  
     for(row =0; row< h1; row++)
       {
       if(max_ele!=min_ele)  
@@ -32,7 +28,8 @@ GrayscaleImage::GrayscaleImage(const ElevationDataset& dataset)
          for(col=0;col<w1;col++)
          {
             ele = dataset.DatumAt(row,col);
-            ele= static_cast<int>(std::round((ele - min_ele) *255 / (max_ele - min_ele)));//double to int
+//ele= static_cast<int>(std::round((double)(ele - min_ele) / (double)(max_ele - min_ele)*255.0));//double to int
+ele= static_cast<int>(std::round(((ele - min_ele)*255+(max_ele - min_ele)/2) / (max_ele - min_ele)));//double to int
             rowv.at(col) = Color(ele,ele,ele);
          }
        }
@@ -49,6 +46,8 @@ GrayscaleImage::GrayscaleImage(const ElevationDataset& dataset)
     //representation from each read elevation datum. Sets width_ and height_ appropriately.
 GrayscaleImage::GrayscaleImage(const std::string& filename, size_t width, size_t height)
 {
+    width_  = width;
+    height_ = height;
     ElevationDataset eledata = ElevationDataset(filename, width,  height);
     new(this) GrayscaleImage(eledata); //call another constructor
 }
@@ -83,23 +82,20 @@ const std::vector<std::vector<Color> >& GrayscaleImage::GetImage() const
 void GrayscaleImage::ToPpm( const std::string& name ) const
 {
    std::string s1; 
-   size_t w1,h1;
-   size_t row,col;
-   Color colorv;
    std::ofstream ofs;
    ofs.open(name,std::ifstream::out);
-   if(!ofs.is_open()) goto error_process;
-   w1 = Width();
-   h1 = Height();
+   if(!ofs.is_open())  std::runtime_error("ToPpm file open error");
+   size_t w1 = Width();
+   size_t h1 = Height();
    ofs <<"P3"<<std::endl;
    ofs <<w1<<std::endl;
    ofs <<h1<<std::endl;
    ofs <<MaxColorValue()<<std::endl;
-   for(row=0;row<h1;row++)
+   for(size_t row=0;row<h1;row++)
     {
-        for(col=0;col<w1;col++)
+        for(size_t col=0;col<w1;col++)
         {
-            colorv = ColorAt(row,col);
+            Color colorv= ColorAt((int)row,(int)col);
             ofs << colorv.Red()<<' ';
             ofs << colorv.Green()<<' ';
             ofs << colorv.Blue()<<' ';
@@ -107,8 +103,4 @@ void GrayscaleImage::ToPpm( const std::string& name ) const
             ofs << std::endl;
     }
     ofs.close();
-    return;
-error_process:
-    std::runtime_error("ToPpm file open error");
-
 }

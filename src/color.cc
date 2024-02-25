@@ -1,6 +1,10 @@
 #include <stdexcept>
 #include "color.hpp"
 
+bool operator==(const Color &lhs, const Color &rhs)
+{
+    return (lhs.Blue()==rhs.Blue() && lhs.Green()==rhs.Green() && lhs.Red()==rhs.Red());
+}
 
 //Assigns each data member its zero value.
 Color::Color()
@@ -13,23 +17,14 @@ Color::Color()
 //red_, green_, and blue_ are each within the range 0 to 255 inclusive. 
 //Throw an exception if any of the arguments are outside that range.
 //TestCase required.
-Color::Color(int r, int g, int b)
+Color::Color(int r, int g, int b):red_(r), green_(g),blue_(b)
 {
     
-    if(( r < kColorValueMin) || (r > kColorValueMax)) 
-         goto error_process;
-    else if(( g < kColorValueMin) || (g > kColorValueMax)) 
-          goto error_process;
-    else if(( b < kColorValueMin) || (b > kColorValueMax)) 
-         goto error_process;
-    red_ = r;
-    green_= g;
-    blue_ = b;
-    return;
-error_process:
-    //throw exception
-    throw std::runtime_error("error rgb value");
-}
+    if(( r < kColorValueMin) || (r > kColorValueMax) ||
+       ( g < kColorValueMin) || (g > kColorValueMax) 
+    || ( b < kColorValueMin) || (b > kColorValueMax)) 
+        throw std::runtime_error("error rgb value");   
+    }
 int Color::Red() const 
 {
     return red_;

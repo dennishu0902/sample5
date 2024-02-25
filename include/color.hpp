@@ -19,4 +19,5 @@ private:
     int green_ ;
     int blue_ ;    
 };
+bool operator==(const Color &lhs, const Color &rhs);
 #endif

@@ -1,6 +1,6 @@
 #ifndef GRAYSACLE_IMAGE_H
 #define GRAYSACLE_IMAGE_H
-#include <cstddef>
+#include <cstdlib>
 #include <vector>
 #include "elevation_dataset.hpp"
 #include "color.hpp"

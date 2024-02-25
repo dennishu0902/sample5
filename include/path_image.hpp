@@ -1,6 +1,6 @@
 #ifndef PATHIMG_H
 #define PATHIMG_H
-#include <cstddef>
+#include <cstdlib>
 #include <vector>
 #include "elevation_dataset.hpp"
 #include "grayscale_image.hpp"
@@ -23,6 +23,9 @@ public:
     void ToPpm(const std::string& name) const;//Writes out path_image_ in plain PPM format; filename is name.
     //Returns the Color at row col by reference to const
     const Color& ColorAt(int row, int col) const;
+    void PutPathtoImage();
+    void ChooseBestWay(size_t& best_row, int cur_ele, int n_ele1, 
+                              int n_ele2, int n_ele3, int &ele_change);
 private:
     //Vector storing the paths traversals calculated on image_ from each row;
     // paths_.at(0) yields the Path object encoding the traversal across 

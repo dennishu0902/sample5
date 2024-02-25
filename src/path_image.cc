@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstddef>
+#include <cstdlib>
 #include <fstream>
 #include <limits> 
 #include "color.hpp"
@@ -7,10 +7,7 @@
 #include "grayscale_image.hpp"
 #include "path.hpp"
 #include "path_image.hpp"
-#define WATCH_TIME
-#ifdef WATCH_TIME
-#include <chrono> 
-#endif
+
 using namespace std;
     //Initializes the primitive data members with their respective values read from image; 
     //populates the two-dimensional std::vector<std::vector<Color>> with values from 
@@ -18,18 +15,14 @@ using namespace std;
     //you may wish to maintain the row of the best path in a variable best_path_row_.
 PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &dataset)
 {
-    size_t w1,h1,best_row,row,col;
-    int cur_ele,n_ele1,n_ele2,n_ele3,ele_change,row_change;
+    size_t best_row=0,row=0,col=0;
+    int cur_ele=0,n_ele1=0,n_ele2=0,n_ele3=0,ele_change=0;
     int int_max = std::numeric_limits<int>::max();
-    int uint_max = std::numeric_limits<unsigned int>::max();
+    unsigned int min_ele_change=std::numeric_limits<unsigned int>::max();
+    path_image_ = image.GetImage(); //Copy from gray image     
 
-    unsigned int min_ele_change=uint_max;
-    path_image_ = image.GetImage(); //Copy from gray image
-    Color kPathColorValue=Color(252,25,63);
-    Color kBestpathColorValue=Color(31,253,13);    
-
-    w1 = image.Width();
-    h1 = image.Height();
+    size_t w1 = image.Width();
+    size_t h1 = image.Height();
     width_ = w1;
     height_= h1;
     best_path_row_ = 0;
@@ -53,22 +46,8 @@ PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &datase
         else n_ele3 = dataset.DatumAt(best_row + 1,col);
        
         n_ele2 = dataset.DatumAt(best_row,col);
-        //middle
-        row_change = 0; 
-        ele_change = abs(n_ele2 - cur_ele);
-        //down
-        if(abs(n_ele3 - cur_ele) < ele_change) 
-        { row_change = 1; ele_change = abs(n_ele3 - cur_ele);}
-        //up
-        if(abs(n_ele1 - cur_ele) < ele_change) 
-        { row_change = -1; ele_change = abs(n_ele1 - cur_ele);}
-        //Get min ele change 
+        ChooseBestWay(best_row, cur_ele, n_ele1, n_ele2, n_ele3, ele_change);
         cur_path.IncEleChange(ele_change);
-        switch(row_change)
-        {
-            case -1: best_row = best_row - 1;break; //avoid using size_t var  + int var 
-            case  1: best_row = best_row + 1;break;
-        }
         cur_path.SetLoc(col,best_row);
         cur_ele = dataset.DatumAt(best_row,col);
       } 
@@ -79,28 +58,44 @@ PathImage::PathImage(const GrayscaleImage &image, const ElevationDataset &datase
       }
      // std::cout << cur_path << std::endl;
     }
-    //put path onto path_image_, Fill specified color to the image
-    for(row=0;row<h1;row++)
+    PutPathtoImage();
+ } 
+void PathImage::ChooseBestWay(size_t& best_row, int cur_ele, int n_ele1, 
+                              int n_ele2, int n_ele3, int &ele_change)
+{
+        //middle
+        int row_change = 0; 
+        ele_change = abs(n_ele2 - cur_ele);
+        //down
+        if(abs(n_ele3 - cur_ele) < ele_change) 
+        { row_change = 1; ele_change = abs(n_ele3 - cur_ele);}
+        //up
+        if(abs(n_ele1 - cur_ele) < ele_change) 
+        { row_change = -1; ele_change = abs(n_ele1 - cur_ele);}
+        //Get min ele change 
+        if(row_change == -1) best_row = best_row - 1;
+        else if(row_change ==  1) best_row = best_row + 1;
+}
+void  PathImage::PutPathtoImage()
+{
+    Color kPathColorValue=Color(252,25,63);
+    Color kBestpathColorValue=Color(31,253,13);   
+     //put path onto path_image_, Fill specified color to the image
+    for(size_t row=0;row<height_;row++)
     {
        Path& cur_path = paths_.at(row); 
        if(row != best_path_row_) //Fill best_path_row_ later, make sure not being overided  
        {
-         for(col=0;col<w1;col++)  
-             {
-               size_t row_b;
-               row_b =  cur_path.GetPath().at(col);//at the pos of each col has been saved a best row of col;
-               path_image_.at(cur_path.GetPath().at(col)).at(col)=kPathColorValue;
-            }
-      }
+         for(size_t col=0;col<width_;col++)  
+            path_image_.at(cur_path.GetPath().at(col)).at(col)=kPathColorValue;
+       }
     }    
     //put best_path onto path_image_, fill specified color to the image
-       Path& cur_path = paths_.at(best_path_row_); 
-       for(col=0;col<w1;col++)  
-       {       size_t row_b;
-               row_b =  cur_path.GetPath().at(col);//at the pos of each col has been saved a best row of col;
-               path_image_.at(row_b).at(col)=kBestpathColorValue;
-        }
- } 
+    Path& cur_path = paths_.at(best_path_row_); 
+    for(size_t col=0;col<width_;col++)  
+        path_image_.at(cur_path.GetPath().at(col)).at(col)=kBestpathColorValue;
+        
+}
 size_t PathImage::Width() const
 {
     return width_;
@@ -138,23 +133,20 @@ const Color& PathImage::ColorAt(int row, int col) const
 void PathImage::ToPpm(const std::string& name) const
 {
    std::string s1; 
-   size_t w1,h1;
-   size_t row,col;
-   Color colorv;
    std::ofstream ofs;
    ofs.open(name);
-   if(!ofs.is_open()) goto error_process;
-   w1 = Width();
-   h1 = Height();
+   if(!ofs.is_open())  std::runtime_error("ToPpm file open error");
+   size_t w1 = Width();
+   size_t h1 = Height();
    ofs<<"P3"<<std::endl;
    ofs<<w1<<std::endl;
    ofs<<h1<<std::endl;
    ofs<<MaxColorValue()<<std::endl;
-   for(row=0;row<h1;row++)
+   for(size_t row=0;row<h1;row++)
     {
-        for(col=0;col<w1;col++)
+        for(size_t col=0;col<w1;col++)
         {
-            colorv = ColorAt(row,col);
+            Color colorv = ColorAt(row,col);
             ofs << colorv.Red()<<' ';
             ofs << colorv.Green()<<' ';
             ofs << colorv.Blue()<<' ';
@@ -162,53 +154,4 @@ void PathImage::ToPpm(const std::string& name) const
             ofs << std::endl;
     }
     ofs.close();
-    return;
-error_process:
-    std::runtime_error("ToPpm file open error");
 }
-#ifndef RUNTEST
-int main(int argc, char *argv[])
-{   
-    if(argc != 5) 
-       {
-        std::cout <<argc ;
-        std::cout << "Please run with input file name width height output file name"<< std::endl;
-        return -1;
-       }
-    std::string inputfile = static_cast<std::string>(argv[1]);
-    std::string widths = static_cast<std::string>(argv[2]);
-    std::string heights = static_cast<std::string>(argv[3]);
-    std::string outputfile = static_cast<std::string>(argv[4]);
-    size_t width, height;
-    try
-    {
-           width = static_cast<size_t>(stoi(widths));   
-           height = static_cast<size_t>(stoi(heights));         
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << "Width or Height is not digital" << std::endl;
-        std::cerr << e.what() << '\n';
-        throw runtime_error("Error parameters");
-    }
-  #ifdef WATCH_TIME
-   using namespace std::chrono;
- high_resolution_clock::time_point t1 = high_resolution_clock::now();
-  #endif  
-    ElevationDataset Dataset(inputfile, width, height);
-    std::cout << "Read Elevation Data" << std::endl;
-    //std::cout << Dataset ;
-    GrayscaleImage   GImage(Dataset);
-    std::cout << "Generated Gray Image" << std::endl;
-    PathImage        PImage(GImage,Dataset);
-    std::cout << "Overlay Path onto Gray Image" << std::endl;
-    PImage.ToPpm(outputfile);
-    std::cout << "Output Path image to PPM" << std::endl;
-  #ifdef WATCH_TIME
-  high_resolution_clock::time_point t2 = high_resolution_clock::now();
-  duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
-  std::cout << "It took me " << time_span.count() << " seconds.";
-  std::cout << std::endl;
-  #endif    
-}
-#endif 

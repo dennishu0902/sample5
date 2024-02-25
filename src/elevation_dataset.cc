@@ -9,30 +9,26 @@ using namespace std;
     //populates the two-dimensional std::vector<std::vector<int>> with elevation data from file. 
     //Sets width_ and height_ appropriately. Records max_ele_ and min_ele_ observed.
 ElevationDataset::ElevationDataset(const std::string& filename, size_t width, size_t height)
+     :width_(width), height_(height)
 {
    std::string s1; 
-   size_t w1,h1;
+   size_t w1=0,h1=0;
    int value;
    std::ifstream ifs;
    std::vector<int> rowv;
    ifs.open(filename,std::ifstream::in);
-   if(!ifs.is_open()) goto error_process;
-   w1 = 0;
-   h1 = 0;
+   if(!ifs.is_open())   throw std::runtime_error ("a runtime error");
    rowv.resize(width,0);
    data_.resize(height,rowv);
-   
    min_ele_ = std::numeric_limits<int>::max();
    max_ele_ = std::numeric_limits<int>::min();
-   
-   w1 = 0;
    try
    {
      while(ifs >> s1) //Read string, use space or LR as seperator 
      {
         size_t pos; 
         value = std::stoi(s1, &pos); 
-        if(pos != s1.size()) goto error_process;
+        if(pos != s1.size()) throw std::runtime_error ("a runtime error");
         if(value < min_ele_) min_ele_ = value;
         if(value > max_ele_) max_ele_ = value;
         data_.at(h1).at(w1) = value;
@@ -49,14 +45,9 @@ ElevationDataset::ElevationDataset(const std::string& filename, size_t width, si
        std::cerr << e.what() << '\n';
        throw std::runtime_error ("a runtime error");
      }
-   if(h1 != height) goto error_process; //too less data in the file
-   if(ifs>>s1)  goto error_process; //too much data in the file
-    width_ = width;
-    height_ =height;
-    ifs.close();
-    return;
-error_process:
-    throw std::runtime_error ("a runtime error");
+   if(h1 != height)  throw std::runtime_error ("a runtime error");
+   if(ifs>>s1)   throw std::runtime_error ("a runtime error");
+   ifs.close();
 }
 //Returns the “width” of the dataset
 size_t ElevationDataset::Width() const
