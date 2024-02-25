@@ -1,6 +1,6 @@
 # Pre-compiler and Compiler flags
 #CXX_FLAGS := -Wall -Wextra -Werror -pedantic -std=c++2a  -ggdb
-CXX_FLAGS := -Wall -Wextra -Werror -pedantic -std=c++2a 
+CXX_FLAGS := -Wall -Wextra -Werror -pedantic -std=c++2a -ggdb
 PRE_FLAGS := -MMD -MP
 CXX :=clang++
 # Project directory structure
@@ -16,7 +16,7 @@ TARGET := $(BIN)/exec
 TARGET1 := $(BIN)/test
 BUILD := build
 BUILD1 := build1
-RUNTEST := test
+RUNTEST := 
 
 # Library search directories and flags
 EXT_LIB :=
