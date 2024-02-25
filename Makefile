@@ -1,14 +1,14 @@
 # Pre-compiler and Compiler flags
 #CXX_FLAGS := -Wall -Wextra -Werror -pedantic -std=c++2a  -ggdb
-CXX_FLAGS := -Wall -Wextra -Werror -pedantic -std=c++2a  -ggdb
+CXX_FLAGS := -Wall -Wextra -Werror -pedantic -std=c++2a 
 PRE_FLAGS := -MMD -MP
 CXX :=clang++
 # Project directory structure
 BIN := bin
 SRC := src
 #LIB := lib
-LIB :=  
-INC := include
+LIB :=
+INC := include /opt/local/include
 MAINFILE := $(SRC)/driver.cc
 
 # Build directories and output
@@ -52,12 +52,12 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	@echo "🚧 Building..."
 	mkdir -p $(dir $@)
-	$(CXX) $(OBJS) -o $@ $(LDPATHS) $(LDFLAG)
+	$(CXX) $(OBJS) -o $@ $(LDPATHS) $(LDFLAG) -L/opt/local/lib/ -lCatch2 -lCatch2Main
 # Task producing target from built files
 $(TARGET1): $(OBJS1)
 	@echo "🚧 Building..."
 	mkdir -p $(dir $@)
-	$(CXX) $(OBJS1) -o $@ $(LDPATHS) $(LDFLAG)
+	$(CXX) $(OBJS1) -o $@ $(LDPATHS) $(LDFLAG) -L/opt/local/lib/ -lCatch2 -lCatch2Main
 
 # Compile all cpp files
 # $(CXX) $(CXX_FLAGS) $(PRE_FLAGS) $(INC_FLAGS) -c -o $@ $< $(LDPATHS) $(LDFLAGS)

@@ -12,6 +12,7 @@
 #include <chrono> 
 #endif
 using namespace std;
+#define RUNTEST 1
 #ifndef RUNTEST
 int main(int argc, char *argv[])
 {   

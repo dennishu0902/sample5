@@ -1,8 +1,9 @@
+#define RUNTEST 1
 #ifdef RUNTEST
 
 #include <algorithm>
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "catch2/catch_all.hpp"
 #include "color.hpp"
 #include "elevation_dataset.hpp"
 #include "grayscale_image.hpp"
@@ -17,6 +18,7 @@ TEST_CASE("Sample0","Color-1")
     REQUIRE((green==color1.Green()));
     REQUIRE((blue==color1.Blue()));
 }
+
 TEST_CASE("Sample1","Color-2")
 {
     CHECK_THROWS(Color(2,3,256));
@@ -52,8 +54,8 @@ TEST_CASE("Sample2","elevationdata-2")
        {10, 10, 10, 10, 10, 10, 10, 10, 10, 10},{11, 11, 11, 11, 11, 11, 11, 11, 11, 11}, 
        {12, 12, 12, 12, 12, 12, 12, 12, 12, 12},{13, 13, 13, 13, 13, 13, 13, 13, 13, 13},
        {14, 15, 15, 15, 15, 15, 15, 15, 15, 15},{15, 15, 15, 15, 15, 15, 15, 15, 15, 15}};
-    size_t best_row = 14;
-    int ele_chane = 0;
+    //size_t best_row = 14;
+    //int ele_chane = 0;
 
     ElevationDataset ed("dataset1.txt", 10,16);
     REQUIRE(std::equal(data1.begin(),data1.end(),ed.GetData().begin(),ed.GetData().end()));
@@ -71,5 +73,4 @@ TEST_CASE("Sample2","elevationdata-2")
     CHECK_THROWS(ElevationDataset("dataset1.txt", 10,17));
     CHECK_THROWS(ElevationDataset("dataset2.txt", 10,16));
 }
-
 #endif 
